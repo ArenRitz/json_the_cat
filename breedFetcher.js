@@ -1,20 +1,31 @@
-const request = require('request')
+const request = require("request");
 
 
-const userInput = process.argv.slice(2).join("").toLowerCase().replaceAll(" ", "").replaceAll("-", "")
+const fetchBreedDescription = function(breedName, callback) {
+ 
+	request("https://api.thecatapi.com/v1/breeds", function (error, response, body) {
+		let data = JSON.parse(body);
+		let found = false;
+		let desc;
+		data.forEach(element => {
+  // if (breedName === element.name.toLowerCase().replaceAll(" ", "").replaceAll("-", "")) {
+		 if (breedName === element.name) {
+				desc = element.description;
+				found = true;
+        
+			}
+		});
 
+		if (!found) {
+			desc = "Breed not found";
+		}
+		callback(error, desc);
+	});
+  
+};
 
-request('https://api.thecatapi.com/v1/breeds', function (error, response, body) {
-  let data = JSON.parse(body);
-  data.forEach(element => {
-    if (userInput === element.name.toLowerCase().replaceAll(" ", "").replaceAll("-", "")) {
-      console.log(element.description);
-    }
-  });
-
-});
-
-
-
+module.exports = {
+	fetchBreedDescription, 
+};
 
 
